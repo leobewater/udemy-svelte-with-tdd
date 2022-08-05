@@ -4,3 +4,6 @@
 
 <label for="e-mail">Email</label>
 <input id="e-mail" />
+
+<label for="password">Password</label>
+<input id="password" />

@@ -27,5 +27,11 @@ describe('Sign Up Page', () => {
       const input = screen.getByLabelText('Email');
       expect(input).toBeInTheDocument();
     });
+
+    it('has password input', () => {
+      render(SignUpPage);
+      const input = screen.getByLabelText('Password');
+      expect(input).toBeInTheDocument();
+    });
   });
 });

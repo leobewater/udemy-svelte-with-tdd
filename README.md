@@ -1,5 +1,6 @@
 This project include frontend and backend projects
 
+\> cd frontend
 \> npm run dev
 \> npm run test:watch
 
@@ -7,6 +8,9 @@ For backend
 \> cd backend
 \> npm i
 \> npm run start-mem
+
+To test backend use postman
+GET http://localhost:8080/api/1.0/users/55
 
 
 # Svelte + Vite

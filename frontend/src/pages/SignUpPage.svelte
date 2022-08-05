@@ -6,4 +6,4 @@
 <input id="e-mail" />
 
 <label for="password">Password</label>
-<input id="password" />
+<input id="password" type="password" />

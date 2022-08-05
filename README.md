@@ -1,3 +1,14 @@
+This project include frontend and backend projects
+
+\> npm run dev
+\> npm run test:watch
+
+For backend
+\> cd backend
+\> npm i
+\> npm run start-mem
+
+
 # Svelte + Vite
 
 This template should help get you started developing with Svelte in Vite.

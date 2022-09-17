@@ -4,8 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 //import axios from 'axios';
-import { setupServer } from 'msw/node';
 import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 
 describe('Sign Up Page', () => {
   describe('Layout', () => {
@@ -71,28 +71,8 @@ describe('Sign Up Page', () => {
   });
 
   describe('Interactions', () => {
-    it('enables the submit button when password fields matched', async () => {
-      render(SignUpPage);
-      const passwordInput = screen.getByLabelText('Password');
-      const passwordRepeatInput = screen.getByLabelText('Password Repeat');
-      await userEvent.type(passwordInput, 'P4ssword');
-      await userEvent.type(passwordRepeatInput, 'P4ssword');
-      const button = screen.getByRole('button', { name: 'Sign Up' });
-      expect(button).toBeEnabled();
-    });
-
-    it('sends username, email, password to the backend after clicking the submit button', async () => {
-      // use msw and set up mocked api endpoint(s)
-      let requestBody;
-      const server = setupServer(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          requestBody = req.body;
-          console.log(requestBody)
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
+    // shared setup form fields
+    const setup = async () => {
       render(SignUpPage);
 
       const usernameInput = screen.getByLabelText('Username');
@@ -104,7 +84,27 @@ describe('Sign Up Page', () => {
       await userEvent.type(emailInput, 'user1@mail.com');
       await userEvent.type(passwordInput, 'P4ssword');
       await userEvent.type(passwordRepeatInput, 'P4ssword');
+    };
 
+    it('enables the submit button when password fields matched', async () => {
+      await setup();
+      const button = screen.getByRole('button', { name: 'Sign Up' });
+      expect(button).toBeEnabled();
+    });
+
+    it('sends username, email, password to the backend after clicking the submit button', async () => {
+      // use msw and set up mocked api endpoint(s)
+      let requestBody;
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          requestBody = req.body;
+          console.log(requestBody);
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      await setup(); // setup form fields
       const button = screen.getByRole('button', { name: 'Sign Up' });
 
       await userEvent.click(button);
@@ -117,6 +117,31 @@ describe('Sign Up Page', () => {
         email: 'user1@mail.com',
         password: 'P4ssword',
       });
+    });
+
+    it('disables button when there is an ongoing api call', async () => {
+      let counter = 0;
+
+      // use msw and set up mocked api endpoint(s)
+      let requestBody;
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          requestBody = req.body;
+          counter += 1;
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      await setup(); // setup form fields
+      const button = screen.getByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button);
+      await userEvent.click(button);
+
+      await server.close();
+
+      expect(counter).toBe(1);
     });
   });
 });

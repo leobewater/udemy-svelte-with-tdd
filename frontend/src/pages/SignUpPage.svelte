@@ -25,6 +25,8 @@
       email,
       password,
     });
+
+    // using fetch instead of axios
     // fetch('/api/1.0/users', {
     //   method: 'POST',
     //   headers: {
@@ -56,3 +58,9 @@
 
   <button {disabled} on:click|preventDefault={submit}>Sign Up</button>
 </form>
+
+<style>
+  h1 {
+    color: green;
+  }
+</style>

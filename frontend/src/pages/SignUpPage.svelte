@@ -20,6 +20,8 @@
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
 
   const submit = () => {
+    disabled = true;
+    
     axios.post('/api/1.0/users', {
       username,
       email,

@@ -1,5 +1,5 @@
 <script>
-  // import axios from 'axios';
+  import axios from 'axios';
   let disabled = true;
   let username, email, password, passwordRepeat;
 
@@ -20,27 +20,27 @@
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
 
   const submit = () => {
-    // axios.post('/api/1.0/users', {
-    //   username,
-    //   email,
-    //   password,
-    // });
-    fetch('/api/1.0/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username,
-        email,
-        password,
-      }),
+    axios.post('/api/1.0/users', {
+      username,
+      email,
+      password,
     });
+    // fetch('/api/1.0/users', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     username,
+    //     email,
+    //     password,
+    //   }),
+    // });
   };
 </script>
 
 <h1>Sign Up</h1>
-<form on:submit|preventDefault={submit}>
+<form>
   <label for="username">Username</label>
   <input id="username" bind:value={username} />
 
@@ -54,5 +54,5 @@
   <label for="password-repeat">Password Repeat</label>
   <input id="password-repeat" type="password" bind:value={passwordRepeat} />
 
-  <button {disabled}>Sign Up</button>
+  <button {disabled} on:click|preventDefault={submit}>Sign Up</button>
 </form>

@@ -1,13 +1,15 @@
+import SignUpPage from './SignUpPage.svelte';
 import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
+//import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
-import SignUpPage from './SignUpPage.svelte';
-import axios from 'axios';
+//import axios from 'axios';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 
 describe('Sign Up Page', () => {
   describe('Layout', () => {
-    it('has sign up header', () => {
+    it('has Sign Up header', () => {
       render(SignUpPage);
       const header = screen.getByRole('heading', { name: 'Sign Up' });
       expect(header).toBeInTheDocument();
@@ -78,7 +80,19 @@ describe('Sign Up Page', () => {
       const button = screen.getByRole('button', { name: 'Sign Up' });
       expect(button).toBeEnabled();
     });
+
     it('sends username, email, password to the backend after clicking the submit button', async () => {
+      // use msw and set up mocked api endpoint(s)
+      let requestBody;
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          requestBody = req.body;
+          console.log(requestBody)
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
       render(SignUpPage);
 
       const usernameInput = screen.getByLabelText('Username');
@@ -93,16 +107,12 @@ describe('Sign Up Page', () => {
 
       const button = screen.getByRole('button', { name: 'Sign Up' });
 
-      // replace axios.post with mock function for posting the form to the api
-      const mockFn = vi.fn; //.. jest.fn();
-      axios.post = mockFn;
-
       await userEvent.click(button);
 
-      const firstCall = mockFn.mock.calls[0];
-      const body = firstCall[1];
+      await server.close();
 
-      expect(body).toEqual({
+      // check the mocked api requestBody
+      expect(requestBody).toEqual({
         username: 'user1',
         email: 'user1@mail.com',
         password: 'P4ssword',

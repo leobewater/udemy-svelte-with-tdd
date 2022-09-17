@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
@@ -94,7 +94,7 @@ describe('Sign Up Page', () => {
       const button = screen.getByRole('button', { name: 'Sign Up' });
 
       // replace axios.post with mock function for posting the form to the api
-      const mockFn = jest.fn();
+      const mockFn = vi.fn; //.. jest.fn();
       axios.post = mockFn;
 
       await userEvent.click(button);

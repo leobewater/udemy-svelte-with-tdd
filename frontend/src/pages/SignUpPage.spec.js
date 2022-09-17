@@ -29,7 +29,7 @@ describe('Sign Up Page', () => {
       // expect(container.querySelectorAll('input').length).toBe(2);
       render(SignUpPage);
       // const input = screen.getByPlaceholderText('email');
-      const input = screen.getByLabelText('Email');
+      const input = screen.getByLabelText('E-mail');
       expect(input).toBeInTheDocument();
     });
 
@@ -96,7 +96,7 @@ describe('Sign Up Page', () => {
       render(SignUpPage);
 
       const usernameInput = screen.getByLabelText('Username');
-      const emailInput = screen.getByLabelText('Email');
+      const emailInput = screen.getByLabelText('E-mail');
       const passwordInput = screen.getByLabelText('Password');
       const passwordRepeatInput = screen.getByLabelText('Password Repeat');
 

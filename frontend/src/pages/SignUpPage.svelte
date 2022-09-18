@@ -7,20 +7,20 @@
   let apiProgress = false;
   let signUpSuccess = false;
 
-  const submit = () => {
+  const submit = async () => {
     disabled = true;
     apiProgress = true;
 
-    axios
-      .post('/api/1.0/users', {
+    try {
+      await axios.post('/api/1.0/users', {
         username,
         email,
         password,
-      })
-      .then(() => {
-        signUpSuccess = true;
-      })
-      .catch((error) => {});
+      });
+      signUpSuccess = true;
+    } catch (error) {
+      
+    }
 
     // using fetch instead of axios
     // fetch('/api/1.0/users', {

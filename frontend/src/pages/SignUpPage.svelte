@@ -2,29 +2,15 @@
   import axios from 'axios';
   let username, email, password, passwordRepeat;
 
-  //   const onChangePassword = (event) => {
-  //     password = event.target.value;
-  //     // refreshDisabled();
-  //   };
-
-  //   const onChangePasswordRepeat = (event) => {
-  //     passwordRepeat = event.target.value;
-  //     // refreshDisabled();
-  //   };
-
-  //   const refreshDisabled = () => {
-  //     disabled = password !== passwordRepeat;
-  //   };
-
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
 
-  let apiProgress = false;
+  let apiProgress;
 
   const submit = () => {
     disabled = true;
-    apiProgress = true;
 
-    axios.post('/api/1.0/users', {
+    // axios returns a promise
+    apiProgress = axios.post('/api/1.0/users', {
       username,
       email,
       password,

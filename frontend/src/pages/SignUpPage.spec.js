@@ -92,7 +92,7 @@ describe('Sign Up Page', () => {
       expect(button).toBeEnabled();
     });
 
-    it('sends username, email, password to the backend after clicking the submit button', async () => {
+    it('sends username, email and password to backend after clicking the button', async () => {
       // use msw and set up mocked api endpoint(s)
       let requestBody;
       const server = setupServer(
@@ -150,16 +150,13 @@ describe('Sign Up Page', () => {
       );
 
       server.listen();
-      await setup(); // setup form fields
+      await setup();
       const button = screen.getByRole('button', { name: 'Sign Up' });
 
       await userEvent.click(button);
 
       // check bootstrap spinner is appearing or not
       const spinner = screen.getByRole('status');
-
-      await server.close();
-
       expect(spinner).toBeInTheDocument();
     });
 

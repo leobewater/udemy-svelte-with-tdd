@@ -1,7 +1,7 @@
 import SignUpPage from './SignUpPage.svelte';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/svelte';
+import { render, screen, waitFor } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 //import axios from 'axios';
 import { rest } from 'msw';
@@ -189,6 +189,49 @@ describe('Sign Up Page', () => {
 
     it('does not display account activation message before sign up request', async () => {
       await setup();
+      const text = screen.queryByText(
+        'Please check your e-mail to activate your account'
+      );
+      expect(text).not.toBeInTheDocument();
+    });
+
+
+    it('hide sign up form after successful sign up request', async () => {
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      await setup();
+      const button = screen.getByRole('button', { name: 'Sign Up' });
+
+      // at first the form appears
+      const form = screen.getByTestId('form-sign-up');
+      await userEvent.click(button);
+      await server.close();
+      // waitFor by default wait 1 second
+      await waitFor(() => {
+        expect(form).not.toBeInTheDocument();
+      });
+    });
+
+    it('does not display account activation information after failing sign up request', async () => {
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          return res(ctx.status(400));
+        })
+      );
+
+      server.listen();
+      await setup();
+      const button = screen.getByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button);
+      await server.close();
+
+      // findBy has await which waits for 1 sec otherwise throw error
       const text = screen.queryByText(
         'Please check your e-mail to activate your account'
       );

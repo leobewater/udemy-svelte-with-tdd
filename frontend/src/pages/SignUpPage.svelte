@@ -5,6 +5,7 @@
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
 
   let apiProgress;
+  let signUpSuccess = false;
 
   const submit = () => {
     disabled = true;
@@ -15,6 +16,7 @@
       email,
       password,
     });
+    signUpSuccess = true;
 
     // using fetch instead of axios
     // fetch('/api/1.0/users', {
@@ -83,4 +85,9 @@
       </div>
     </div>
   </form>
+  {#if signUpSuccess}
+    <div class="alert alert-success" role="alert">
+      Please check your e-mail to activate your account
+    </div>
+  {/if}
 </div>

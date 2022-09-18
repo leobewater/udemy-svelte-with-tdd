@@ -3,9 +3,8 @@ import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
-//import axios from 'axios';
-import { rest } from 'msw';
 import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 
 describe('Sign Up Page', () => {
   describe('Layout', () => {
@@ -63,7 +62,7 @@ describe('Sign Up Page', () => {
       expect(button).toBeInTheDocument();
     });
 
-    it('Sign Up button disabled initially', () => {
+    it('disables the button initially', () => {
       render(SignUpPage);
       const button = screen.getByRole('button', { name: 'Sign Up' });
       expect(button).toBeDisabled();
@@ -71,8 +70,28 @@ describe('Sign Up Page', () => {
   });
 
   describe('Interactions', () => {
+    // use msw and set up mocked api endpoint(s)
+    let requestBody;
+    let counter = 0;
+
+    const server = setupServer(
+      rest.post('/api/1.0/users', (req, res, ctx) => {
+        requestBody = req.body;
+        counter += 1;
+        // console.log(requestBody);
+        return res(ctx.status(200));
+      })
+    );
+
+    beforeAll(() => server.listen());
+    beforeEach(() => {
+      counter = 0;
+    });
+    afterAll(() => server.close());
+
     // shared setup form fields
     let button, usernameInput, emailInput, passwordInput, passwordRepeatInput;
+
     const setup = async () => {
       render(SignUpPage);
 
@@ -93,22 +112,12 @@ describe('Sign Up Page', () => {
     });
 
     it('sends username, email and password to backend after clicking the button', async () => {
-      // use msw and set up mocked api endpoint(s)
-      let requestBody;
-      const server = setupServer(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          requestBody = req.body;
-          console.log(requestBody);
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-      await setup(); // setup form fields
-
+      await setup();
       await userEvent.click(button);
 
-      await server.close();
+      await screen.findByText(
+        'Please check your e-mail to activate your account'
+      );
 
       // check the mocked api requestBody
       expect(requestBody).toEqual({
@@ -119,40 +128,20 @@ describe('Sign Up Page', () => {
     });
 
     it('disables button when there is an ongoing api call', async () => {
-      let counter = 0;
+      await setup();
 
-      // use msw and set up mocked api endpoint(s)
-      let requestBody;
-      const server = setupServer(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          requestBody = req.body;
-          counter += 1;
-          return res(ctx.status(200));
-        })
+      await userEvent.click(button);
+      await userEvent.click(button);
+
+      await screen.findByText(
+        'Please check your e-mail to activate your account'
       );
-
-      server.listen();
-      await setup(); // setup form fields
-
-      await userEvent.click(button);
-      await userEvent.click(button);
-
-      await server.close();
 
       expect(counter).toBe(1);
     });
 
     it('displays spinner while the api request in progress', async () => {
-      const server = setupServer(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
       await setup();
-      const button = screen.getByRole('button', { name: 'Sign Up' });
-
       await userEvent.click(button);
 
       // check bootstrap spinner is appearing or not
@@ -167,18 +156,8 @@ describe('Sign Up Page', () => {
     });
 
     it('displays account activation information after successful sign up request', async () => {
-      const server = setupServer(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
       await setup();
-      const button = screen.getByRole('button', { name: 'Sign Up' });
-
       await userEvent.click(button);
-      await server.close();
 
       // findBy has await which waits for 1 sec otherwise throw error
       const text = await screen.findByText(
@@ -195,47 +174,33 @@ describe('Sign Up Page', () => {
       expect(text).not.toBeInTheDocument();
     });
 
-
-    it('hide sign up form after successful sign up request', async () => {
-      const server = setupServer(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(ctx.status(200));
-        })
-      );
-
-      server.listen();
-      await setup();
-      const button = screen.getByRole('button', { name: 'Sign Up' });
-
-      // at first the form appears
-      const form = screen.getByTestId('form-sign-up');
-      await userEvent.click(button);
-      await server.close();
-      // waitFor by default wait 1 second
-      await waitFor(() => {
-        expect(form).not.toBeInTheDocument();
-      });
-    });
-
     it('does not display account activation information after failing sign up request', async () => {
-      const server = setupServer(
+      server.use(
         rest.post('/api/1.0/users', (req, res, ctx) => {
           return res(ctx.status(400));
         })
       );
 
-      server.listen();
       await setup();
-      const button = screen.getByRole('button', { name: 'Sign Up' });
-
       await userEvent.click(button);
-      await server.close();
 
       // findBy has await which waits for 1 sec otherwise throw error
       const text = screen.queryByText(
         'Please check your e-mail to activate your account'
       );
       expect(text).not.toBeInTheDocument();
+    });
+
+    it('hides sign up form after successful sign up request', async () => {
+      await setup();
+      // at first the form appears by using data-testid
+      const form = screen.getByTestId('form-sign-up');
+      await userEvent.click(button);
+
+      // waitFor by default wait 1 second
+      await waitFor(() => {
+        expect(form).not.toBeInTheDocument();
+      });
     });
   });
 });

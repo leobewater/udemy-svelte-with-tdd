@@ -89,10 +89,8 @@
         </div>
       </div>
     </form>
-  {/if}
-
-  {#if signUpSuccess}
-    <div class="alert alert-success">
+  {:else}
+    <div class="alert alert-success mt-3">
       Please check your e-mail to activate your account
     </div>
   {/if}

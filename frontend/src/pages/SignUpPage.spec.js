@@ -1,6 +1,6 @@
 import SignUpPage from './SignUpPage.svelte';
 import { describe, expect, it, vi } from 'vitest';
-//import '@testing-library/jest-dom';
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 //import axios from 'axios';
@@ -72,23 +72,23 @@ describe('Sign Up Page', () => {
 
   describe('Interactions', () => {
     // shared setup form fields
+    let button, usernameInput, emailInput, passwordInput, passwordRepeatInput;
     const setup = async () => {
       render(SignUpPage);
 
-      const usernameInput = screen.getByLabelText('Username');
-      const emailInput = screen.getByLabelText('E-mail');
-      const passwordInput = screen.getByLabelText('Password');
-      const passwordRepeatInput = screen.getByLabelText('Password Repeat');
-
+      usernameInput = screen.getByLabelText('Username');
+      emailInput = screen.getByLabelText('E-mail');
+      passwordInput = screen.getByLabelText('Password');
+      passwordRepeatInput = screen.getByLabelText('Password Repeat');
+      button = screen.getByRole('button', { name: 'Sign Up' });
       await userEvent.type(usernameInput, 'user1');
       await userEvent.type(emailInput, 'user1@mail.com');
       await userEvent.type(passwordInput, 'P4ssword');
       await userEvent.type(passwordRepeatInput, 'P4ssword');
     };
 
-    it('enables the submit button when password fields matched', async () => {
+    it('enables the button when the password and password repeat fields have same value', async () => {
       await setup();
-      const button = screen.getByRole('button', { name: 'Sign Up' });
       expect(button).toBeEnabled();
     });
 
@@ -105,7 +105,6 @@ describe('Sign Up Page', () => {
 
       server.listen();
       await setup(); // setup form fields
-      const button = screen.getByRole('button', { name: 'Sign Up' });
 
       await userEvent.click(button);
 
@@ -134,7 +133,6 @@ describe('Sign Up Page', () => {
 
       server.listen();
       await setup(); // setup form fields
-      const button = screen.getByRole('button', { name: 'Sign Up' });
 
       await userEvent.click(button);
       await userEvent.click(button);
@@ -142,6 +140,27 @@ describe('Sign Up Page', () => {
       await server.close();
 
       expect(counter).toBe(1);
+    });
+
+    it('displays spinner while the api request in progress', async () => {
+      const server = setupServer(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          return res(ctx.status(200));
+        })
+      );
+
+      server.listen();
+      await setup(); // setup form fields
+      const button = screen.getByRole('button', { name: 'Sign Up' });
+
+      await userEvent.click(button);
+
+      // check bootstrap spinner is appearing or not
+      const spinner = screen.getByRole('status');
+
+      await server.close();
+
+      expect(spinner).toBeInTheDocument();
     });
   });
 });

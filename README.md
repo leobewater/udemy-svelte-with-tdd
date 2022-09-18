@@ -15,6 +15,10 @@ GET http://localhost:8080/api/1.0/users/55
 Source Code: https://github.com/basarbk/tdd-svelte
 
 
+https://blog.logrocket.com/testing-svelte-app-vitest/
+Add jest-dom to vitest to use .toBeEnabled() and more.
+
+
 # Svelte + Vite
 
 This template should help get you started developing with Svelte in Vite.

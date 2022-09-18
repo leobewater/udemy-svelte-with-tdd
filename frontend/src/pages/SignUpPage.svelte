@@ -1,6 +1,5 @@
 <script>
   import axios from 'axios';
-  let disabled = true;
   let username, email, password, passwordRepeat;
 
   //   const onChangePassword = (event) => {
@@ -21,7 +20,7 @@
 
   const submit = () => {
     disabled = true;
-    
+
     axios.post('/api/1.0/users', {
       username,
       email,
@@ -85,7 +84,8 @@
         <button
           class="btn btn-primary"
           {disabled}
-          on:click|preventDefault={submit}>Sign Up</button
+          on:click|preventDefault={submit}
+          ><span class="spinner-border spinner-border-sm" role="status" /> Sign Up</button
         >
       </div>
     </div>

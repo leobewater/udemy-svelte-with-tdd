@@ -4,22 +4,23 @@
 
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
 
-  let apiProgress;
+  let apiProgress = false;
   let signUpSuccess = false;
 
   const submit = () => {
     disabled = true;
+    apiProgress = true;
 
-    // axios returns a promise
-    apiProgress = axios.post('/api/1.0/users', {
-      username,
-      email,
-      password,
-    });
-
-    apiProgress.then(() => {
-      signUpSuccess = true;
-    });
+    axios
+      .post('/api/1.0/users', {
+        username,
+        email,
+        password,
+      })
+      .then(() => {
+        signUpSuccess = true;
+      })
+      .catch((error) => {});
 
     // using fetch instead of axios
     // fetch('/api/1.0/users', {

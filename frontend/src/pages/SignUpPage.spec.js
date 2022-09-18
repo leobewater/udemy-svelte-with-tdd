@@ -6,6 +6,11 @@ import userEvent from '@testing-library/user-event';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 
+const server = setupServer();
+beforeAll(() => server.listen());
+beforeEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
 describe('Sign Up Page', () => {
   describe('Layout', () => {
     it('has Sign Up header', () => {
@@ -70,24 +75,20 @@ describe('Sign Up Page', () => {
   });
 
   describe('Interactions', () => {
-    // use msw and set up mocked api endpoint(s)
     let requestBody;
     let counter = 0;
 
-    const server = setupServer(
-      rest.post('/api/1.0/users', (req, res, ctx) => {
-        requestBody = req.body;
-        counter += 1;
-        // console.log(requestBody);
-        return res(ctx.status(200));
-      })
-    );
-
-    beforeAll(() => server.listen());
     beforeEach(() => {
       counter = 0;
+      server.use(
+        // use msw and set up mocked api endpoint(s)
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          requestBody = req.json();
+          counter += 1;
+          return res(ctx.status(200));
+        })
+      );
     });
-    afterAll(() => server.close());
 
     // shared setup form fields
     let button, usernameInput, emailInput, passwordInput, passwordRepeatInput;
@@ -142,9 +143,9 @@ describe('Sign Up Page', () => {
 
     it('displays spinner while the api request in progress', async () => {
       await setup();
+
       await userEvent.click(button);
 
-      // check bootstrap spinner is appearing or not
       const spinner = screen.getByRole('status');
       expect(spinner).toBeInTheDocument();
     });

@@ -18,8 +18,11 @@
 
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
 
+  let apiProgress = false;
+
   const submit = () => {
     disabled = true;
+    apiProgress = true;
 
     axios.post('/api/1.0/users', {
       username,
@@ -85,7 +88,11 @@
           class="btn btn-primary"
           {disabled}
           on:click|preventDefault={submit}
-          ><span class="spinner-border spinner-border-sm" role="status" /> Sign Up</button
+        >
+          {#if apiProgress}
+            <span class="spinner-border spinner-border-sm" role="status" />
+          {/if}
+          Sign Up</button
         >
       </div>
     </div>

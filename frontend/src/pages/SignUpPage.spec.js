@@ -162,5 +162,11 @@ describe('Sign Up Page', () => {
 
       expect(spinner).toBeInTheDocument();
     });
+
+    it('does not display spinner when there is no api request', async () => {
+      await setup();
+      const spinner = screen.queryByRole('status');
+      expect(spinner).not.toBeInTheDocument();
+    });
   });
 });

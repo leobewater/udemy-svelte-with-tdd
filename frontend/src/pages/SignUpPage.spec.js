@@ -233,12 +233,6 @@ describe('Sign Up Page', () => {
       expect(usernameValidationError).toBeInTheDocument();
     });
 
-    it('does not display validation message initially', async () => {
-      await setup();
-      const validationAlert = screen.queryByRole('alert');
-      expect(validationAlert).not.toBeInTheDocument();
-    });
-
     it('hides spinner after response received', async () => {
       server.use(
         rest.post('/api/1.0/users', (req, res, ctx) => {

@@ -21,5 +21,11 @@ it('has invalid-feedback class for span when help is set', () => {
 it('does not have is-invalid class for input when help is not set', () => {
   const { container } = render(Input);
   const input = container.querySelector('input');
-  expect(input).not.toHaveClass('is-invalid', {exact:true});
+  expect(input).not.toHaveClass('is-invalid', { exact: true });
+});
+
+it('does not display validation message initially', () => {
+  render(Input);
+  const validationAlert = screen.queryByRole('alert');
+  expect(validationAlert).not.toBeInTheDocument();
 });

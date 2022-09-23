@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
-import '../../setupTest'
+import '../../setupTest';
 
 const server = setupServer();
 beforeAll(() => server.listen());
@@ -210,41 +210,38 @@ describe('Sign Up Page', () => {
       });
     });
 
-    it('displays validation message for username', async () => {
-      server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
-              validationErrors: {
-                username: 'Username cannot be null',
-              },
-            })
-          );
-        })
-      );
+    // use jest each for running similar tests
+    const generateValidationError = (field, message) => {
+      return rest.post('/api/1.0/users', (req, res, ctx) => {
+        return res(
+          ctx.status(400),
+          ctx.json({
+            validationErrors: {
+              [field]: message,
+            },
+          })
+        );
+      });
+    };
+
+    it.each`
+      field         | message
+      ${'username'} | ${'Username cannot be null'}
+      ${'email'}    | ${'E-mail cannot be null'}
+      ${'password'} | ${'Password cannot be null'}
+    `('displays $message for $field field', async ({ field, message }) => {
+      server.use(generateValidationError(field, message));
 
       await setup();
       await userEvent.click(button);
 
-      const usernameValidationError = await screen.findByText(
-        'Username cannot be null'
-      );
-      expect(usernameValidationError).toBeInTheDocument();
+      const validationError = await screen.findByText(message);
+      expect(validationError).toBeInTheDocument();
     });
 
     it('hides spinner after response received', async () => {
       server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
-              validationErrors: {
-                username: 'Username cannot be null',
-              },
-            })
-          );
-        })
+        generateValidationError('username', 'Username cannot be null')
       );
 
       await setup();
@@ -257,16 +254,7 @@ describe('Sign Up Page', () => {
 
     it('enables the button after response received', async () => {
       server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
-              validationErrors: {
-                username: 'Username cannot be null',
-              },
-            })
-          );
-        })
+        generateValidationError('username', 'Username cannot be null')
       );
 
       await setup();
@@ -277,27 +265,20 @@ describe('Sign Up Page', () => {
       expect(button).toBeEnabled();
     });
 
-    it('displays validation message for email', async () => {
-      server.use(
-        rest.post('/api/1.0/users', (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
-              validationErrors: {
-                username: 'E-mail cannot be null',
-              },
-            })
-          );
-        })
-      );
-
+    it('displays mismatch message for password repeat input', async () => {
       await setup();
-      await userEvent.click(button);
+      // override preset testing password
+      await userEvent.type(passwordInput, 'N3wP4ss');
+      await userEvent.type(passwordRepeatInput, 'anotherPass');
 
-      const emailValidationError = await screen.findByText(
-        'E-mail cannot be null'
-      );
-      expect(emailValidationError).toBeInTheDocument();
+      const validationError = await screen.findByText('Password mismatch');
+      expect(validationError).toBeInTheDocument();
+    });
+
+    it('does not display mismatch message initially', async () => {
+      render(SignUpPage);
+      const validationError = screen.queryByText('Password mismatch');
+      expect(validationError).not.toBeInTheDocument();
     });
   });
 });

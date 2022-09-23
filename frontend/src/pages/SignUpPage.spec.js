@@ -276,5 +276,28 @@ describe('Sign Up Page', () => {
 
       expect(button).toBeEnabled();
     });
+
+    it('displays validation message for email', async () => {
+      server.use(
+        rest.post('/api/1.0/users', (req, res, ctx) => {
+          return res(
+            ctx.status(400),
+            ctx.json({
+              validationErrors: {
+                username: 'E-mail cannot be null',
+              },
+            })
+          );
+        })
+      );
+
+      await setup();
+      await userEvent.click(button);
+
+      const emailValidationError = await screen.findByText(
+        'E-mail cannot be null'
+      );
+      expect(emailValidationError).toBeInTheDocument();
+    });
   });
 });

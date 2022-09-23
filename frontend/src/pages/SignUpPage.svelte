@@ -26,18 +26,6 @@
       }
       apiProgress = false;
     }
-    // using fetch instead of axios
-    // fetch('/api/1.0/users', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     username,
-    //     email,
-    //     password,
-    //   }),
-    // });
   };
 </script>
 

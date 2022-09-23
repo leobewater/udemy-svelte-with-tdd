@@ -6,9 +6,9 @@
 
   let apiProgress = false;
   let signUpSuccess = false;
+  let errors = {};
 
   const submit = async () => {
-    disabled = true;
     apiProgress = true;
 
     try {
@@ -19,9 +19,11 @@
       });
       signUpSuccess = true;
     } catch (error) {
-      
+      if (error.response.status === 400) {
+        errors = error.response.data.validationErrors;
+      }
+      apiProgress = false;
     }
-
     // using fetch instead of axios
     // fetch('/api/1.0/users', {
     //   method: 'POST',
@@ -48,6 +50,9 @@
         <div class="form-group">
           <label for="username">Username</label>
           <input id="username" class="form-control" bind:value={username} />
+          {#if errors.username}
+            <span role="alert">{errors.username}</span>
+          {/if}
         </div>
 
         <div class="form-group">
@@ -79,7 +84,7 @@
         <div class="text-center">
           <button
             class="btn btn-primary"
-            {disabled}
+            disabled={disabled || apiProgress}
             on:click|preventDefault={submit}
           >
             {#if apiProgress}

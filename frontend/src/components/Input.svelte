@@ -10,7 +10,6 @@
   // use reference and onMount to assign dynamic type
   let inputElement;
   onMount(() => {
-    console.log(inputElement);
     inputElement.type = type;
   });
 </script>

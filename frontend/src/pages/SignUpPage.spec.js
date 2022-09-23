@@ -224,20 +224,50 @@ describe('Sign Up Page', () => {
       });
     };
 
-    it.each`
-      field         | message
-      ${'username'} | ${'Username cannot be null'}
-      ${'email'}    | ${'E-mail cannot be null'}
-      ${'password'} | ${'Password cannot be null'}
-    `('displays $message for $field field', async ({ field, message }) => {
-      server.use(generateValidationError(field, message));
+    //   it.each`
+    //   field         | message
+    //   ${'username'} | ${'Username cannot be null'}
+    //   ${'email'}    | ${'E-mail cannot be null'}
+    //   ${'password'} | ${'Password cannot be null'}
+    // `("displays ${message} for ${field} field", async ({ field, message }) => {
+    //   server.use(generateValidationError(field, message));
 
-      await setup();
-      await userEvent.click(button);
+    //   await setup();
+    //   await userEvent.click(button);
 
-      const validationError = await screen.findByText(message);
-      expect(validationError).toBeInTheDocument();
-    });
+    //   const validationError = await screen.findByText(message);
+    //   expect(validationError).toBeInTheDocument();
+    // });
+
+    it("displays Username cannot be null for username", async () => {
+    server.use(generateValidationError('username', 'Username cannot be null'));
+
+    await setup();
+    await userEvent.click(button);
+
+    const validationError = await screen.findByText('Username cannot be null');
+    expect(validationError).toBeInTheDocument();
+  });
+
+  it("displays E-mail cannot be null for email", async () => {
+    server.use(generateValidationError('email', 'E-mail cannot be null'));
+
+    await setup();
+    await userEvent.click(button);
+
+    const validationError = await screen.findByText('E-mail cannot be null');
+    expect(validationError).toBeInTheDocument();
+  });
+
+  it("displays Password cannot be null for password", async () => {
+    server.use(generateValidationError('password', 'Password cannot be null'));
+
+    await setup();
+    await userEvent.click(button);
+
+    const validationError = await screen.findByText('Password cannot be null');
+    expect(validationError).toBeInTheDocument();
+  });
 
     it('hides spinner after response received', async () => {
       server.use(

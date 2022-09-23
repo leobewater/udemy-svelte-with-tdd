@@ -2,12 +2,12 @@
   export let label = '',
     id = '',
     entry = '',
-    help;
+    help = '';
 </script>
 
 <div class="form-group">
   <label for={id}>{label}</label>
-  <input {id} class="form-control is-invalid" bind:value={entry} />
+  <input {id} class="form-control" class:is-invalid={help} bind:value={entry} />
   {#if help}
     <span class="invalid-feedback" role="alert">{help}</span>
   {/if}

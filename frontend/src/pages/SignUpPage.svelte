@@ -50,11 +50,7 @@
 
       <div class="card-body">
         <Input id="username" label="Username" help={errors.username} bind:entry={username} />
-
-        <div class="form-group">
-          <label for="e-mail">E-mail</label>
-          <input id="e-mail" class="form-control" bind:value={email} />
-        </div>
+        <Input id="e-mail" label="E-mail" help={errors.email} bind:entry={email} />
 
         <div class="form-group">
           <label for="password">Password</label>

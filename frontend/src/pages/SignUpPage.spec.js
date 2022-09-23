@@ -91,13 +91,13 @@ describe('Sign Up Page', () => {
     });
 
     // shared setup form fields
-    let button, usernameInput, passwordInput, passwordRepeatInput;
+    let button, usernameInput, emailInput, passwordInput, passwordRepeatInput;
 
     const setup = async () => {
       render(SignUpPage);
 
       usernameInput = screen.getByLabelText('Username');
-      const emailInput = screen.getByLabelText('E-mail');
+      emailInput = screen.getByLabelText('E-mail');
       passwordInput = screen.getByLabelText('Password');
       passwordRepeatInput = screen.getByLabelText('Password Repeat');
       button = screen.getByRole('button', { name: 'Sign Up' });
@@ -308,6 +308,45 @@ describe('Sign Up Page', () => {
     it('does not display mismatch message initially', async () => {
       render(SignUpPage);
       const validationError = screen.queryByText('Password mismatch');
+      expect(validationError).not.toBeInTheDocument();
+    });
+
+    it('clear validation error after username field is updated', async () => {
+      server.use(
+        generateValidationError('username', 'Username cannot be null')
+      );
+
+      await setup();
+      await userEvent.click(button);
+
+      const validationError = await screen.findByText('Username cannot be null');
+      await userEvent.type(usernameInput, 'user1-updated');
+      expect(validationError).not.toBeInTheDocument();
+    });
+
+    it('clear validation error after email field is updated', async () => {
+      server.use(
+        generateValidationError('email', 'E-mail cannot be null')
+      );
+
+      await setup();
+      await userEvent.click(button);
+
+      const validationError = await screen.findByText('E-mail cannot be null');
+      await userEvent.type(emailInput, 'new@email.com');
+      expect(validationError).not.toBeInTheDocument();
+    });
+
+    it('clear validation error after password field is updated', async () => {
+      server.use(
+        generateValidationError('password', 'Password cannot be null')
+      );
+
+      await setup();
+      await userEvent.click(button);
+
+      const validationError = await screen.findByText('Password cannot be null');
+      await userEvent.type(passwordInput, 'newPassword!@#');
       expect(validationError).not.toBeInTheDocument();
     });
   });

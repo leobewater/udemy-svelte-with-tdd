@@ -3,13 +3,24 @@
   import Input from '../components/Input.svelte';
 
   let username, email, password, passwordRepeat;
-  // let passwordMismatch = false;
   let apiProgress = false;
   let signUpSuccess = false;
   let errors = {};
 
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
   $: passwordMismatch = password !== passwordRepeat;
+  // watching variables and clear the errors when variables has some values
+  $: {
+    if (username) {
+      errors.username = '';
+    }
+    if (email) {
+      errors.email = '';
+    }
+    if (password) {
+      errors.password = '';
+    }
+  }
 
   const submit = async () => {
     apiProgress = true;
@@ -38,10 +49,33 @@
       </div>
 
       <div class="card-body">
-        <Input id="username" label="Username" help={errors.username} bind:entry={username} />
-        <Input id="e-mail" type="email" label="E-mail" help={errors.email} bind:entry={email} />
-        <Input id="password" type="password" label="Password" help={errors.password} bind:entry={password} />
-        <Input id="password-repeat" type="password" label="Password Repeat" help={passwordMismatch ? "Password mismatch" : ''} bind:entry={passwordRepeat} />
+        <Input
+          id="username"
+          label="Username"
+          help={errors.username}
+          bind:entry={username}
+        />
+        <Input
+          id="e-mail"
+          type="email"
+          label="E-mail"
+          help={errors.email}
+          bind:entry={email}
+        />
+        <Input
+          id="password"
+          type="password"
+          label="Password"
+          help={errors.password}
+          bind:entry={password}
+        />
+        <Input
+          id="password-repeat"
+          type="password"
+          label="Password Repeat"
+          help={passwordMismatch ? 'Password mismatch' : ''}
+          bind:entry={passwordRepeat}
+        />
 
         <div class="text-center">
           <button

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/svelte';
 import Input from './Input.svelte';
 import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
+import '../../setupTest'
 
 it('has is-invalid class for input when help is set', () => {
   // render component with option

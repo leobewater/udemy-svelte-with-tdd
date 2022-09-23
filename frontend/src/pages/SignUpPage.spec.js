@@ -1,10 +1,10 @@
 import SignUpPage from './SignUpPage.svelte';
 import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
+import '../../setupTest'
 
 const server = setupServer();
 beforeAll(() => server.listen());

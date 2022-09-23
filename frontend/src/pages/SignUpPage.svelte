@@ -1,5 +1,7 @@
 <script>
   import axios from 'axios';
+  import Input from '../components/Input.svelte';
+
   let username, email, password, passwordRepeat;
 
   $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
@@ -47,13 +49,7 @@
       </div>
 
       <div class="card-body">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input id="username" class="form-control" bind:value={username} />
-          {#if errors.username}
-            <span role="alert">{errors.username}</span>
-          {/if}
-        </div>
+        <Input id="username" label="Username" help={errors.username} bind:entry={username} />
 
         <div class="form-group">
           <label for="e-mail">E-mail</label>

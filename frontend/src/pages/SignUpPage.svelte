@@ -1,4 +1,5 @@
 <script>
+  import { _ } from 'svelte-i18n';
   import axios from 'axios';
   import Input from '../components/Input.svelte';
 
@@ -18,7 +19,7 @@
       ? form.password !== form.passwordRepeat
       : true;
   $: passwordMismatch = form.password !== form.passwordRepeat;
-  
+
   // watching variables and clear the errors when variables has some values
   // $: {
   //   if (username) {
@@ -63,34 +64,34 @@
   {#if !signUpSuccess}
     <form class="card mt-5" data-testid="form-sign-up">
       <div class="card-header">
-        <h1 class="text-center">Sign Up</h1>
+        <h1 class="text-center">{$_('signUp')}</h1>
       </div>
 
       <div class="card-body">
         <Input
           id="username"
-          label="Username"
+          label={$_('username')}
           help={errors.username}
           on:input={onChange}
         />
         <Input
           id="email"
           type="email"
-          label="E-mail"
+          label={$_('email')}
           help={errors.email}
           on:input={onChange}
         />
         <Input
           id="password"
           type="password"
-          label="Password"
+          label={$_('password')}
           help={errors.password}
           on:input={onChange}
         />
         <Input
           id="passwordRepeat"
           type="password"
-          label="Password Repeat"
+          label={$_('passwordRepeat')}
           help={passwordMismatch ? 'Password mismatch' : ''}
           on:input={onChange}
         />

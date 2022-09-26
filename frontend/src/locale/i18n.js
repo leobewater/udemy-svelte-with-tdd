@@ -1,19 +1,8 @@
 import { addMessages, init } from 'svelte-i18n';
+import en from './en.json'
+import tr from './tr.json'
 
-addMessages('en', {
-  signUp: 'Sign Up',
-  username: 'Username',
-  email: 'E-mail',
-  password: 'Password',
-  passwordRepeat: 'Password Repeat',
-});
+addMessages('en', en);
+addMessages('tr', tr);
 
-addMessages('tr', {
-  signUp: 'Kayit Ol',
-  username: 'Kullanici Adi',
-  email: 'E-posta',
-  password: 'Şifre',
-  passwordRepeat: 'Şifre Tekrari',
-});
-
-init({ fallbackLocale: 'en', initialLocale: 'en' });
+init({ fallbackLocale: 'en', initialLocale: 'tr' });

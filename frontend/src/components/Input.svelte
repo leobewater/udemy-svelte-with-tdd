@@ -1,17 +1,23 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
 
   export let label = '',
     id = '',
     entry = '',
     help = '',
-    type = 'text', onChange;
+    type = 'text';
 
   // use reference and onMount to assign dynamic type
   let inputElement;
   onMount(() => {
     inputElement.type = type;
   });
+
+  const dispatch = createEventDispatcher();
+
+  const onChange = (event) => {
+    dispatch('myCustomEvent', { value: event.target.value });
+  };
 </script>
 
 <div class="form-group">

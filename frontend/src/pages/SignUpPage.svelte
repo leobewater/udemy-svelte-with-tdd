@@ -2,6 +2,8 @@
   import axios from 'axios';
   import Input from '../components/Input.svelte';
 
+  export let changeListener;
+
   let username, email, password, passwordRepeat;
   let apiProgress = false;
   let signUpSuccess = false;
@@ -41,7 +43,7 @@
   };
 
   const onChangeUsername = (event) => {
-    console.log(event.target.value);
+    console.log("SignUpPage is receiving --> ", event.detail);
   }
 </script>
 
@@ -58,7 +60,7 @@
           label="Username"
           help={errors.username}
           bind:entry={username}
-          onChange={onChangeUsername}
+          on:myCustomEvent={onChangeUsername}
         />
         <Input
           id="e-mail"

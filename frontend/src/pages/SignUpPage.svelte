@@ -2,7 +2,7 @@
   import axios from 'axios';
   import Input from '../components/Input.svelte';
 
-  export let changeListener;
+  // export let changeListener;
 
   let username, email, password, passwordRepeat;
   let apiProgress = false;
@@ -43,7 +43,17 @@
   };
 
   const onChangeUsername = (event) => {
-    console.log("SignUpPage is receiving --> ", event.detail);
+    // console.log("SignUpPage is receiving --> ", event.detail);
+    username = event.target.value;
+  }
+  const onChangeEmail = (event) => {
+    email = event.target.value;
+  }
+  const onChangePassword = (event) => {
+    password = event.target.value;
+  }
+  const onChangePasswordRepeat = (event) => {
+    passwordRepeat = event.target.value;
   }
 </script>
 
@@ -59,29 +69,28 @@
           id="username"
           label="Username"
           help={errors.username}
-          bind:entry={username}
-          on:input
+          on:input={onChangeUsername}
         />
         <Input
           id="e-mail"
           type="email"
           label="E-mail"
           help={errors.email}
-          bind:entry={email}
+          on:input={onChangeEmail}
         />
         <Input
           id="password"
           type="password"
           label="Password"
           help={errors.password}
-          bind:entry={password}
+          on:input={onChangePassword}
         />
         <Input
           id="password-repeat"
           type="password"
           label="Password Repeat"
           help={passwordMismatch ? 'Password mismatch' : ''}
-          bind:entry={passwordRepeat}
+          on:input={onChangePasswordRepeat}
         />
 
         <div class="text-center">

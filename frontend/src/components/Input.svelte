@@ -13,11 +13,11 @@
     inputElement.type = type;
   });
 
-  const dispatch = createEventDispatcher();
+  // const dispatch = createEventDispatcher();
 
-  const onChange = (event) => {
-    dispatch('myCustomEvent', { value: event.target.value });
-  };
+  // const onChange = (event) => {
+  //   dispatch('myCustomEvent', { value: event.target.value });
+  // };
 </script>
 
 <div class="form-group">
@@ -28,7 +28,7 @@
     class="form-control"
     class:is-invalid={help}
     bind:value={entry}
-    on:input={onChange}
+    on:input
   />
   {#if help}
     <span class="invalid-feedback" role="alert">{help}</span>

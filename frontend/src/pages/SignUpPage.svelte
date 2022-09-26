@@ -60,7 +60,7 @@
           label="Username"
           help={errors.username}
           bind:entry={username}
-          on:myCustomEvent={onChangeUsername}
+          on:input
         />
         <Input
           id="e-mail"

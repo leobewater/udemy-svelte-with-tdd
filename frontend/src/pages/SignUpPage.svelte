@@ -3,29 +3,38 @@
   import Input from '../components/Input.svelte';
 
   // export let changeListener;
-
-  let username, email, password, passwordRepeat;
+  let form = {
+    username: '',
+    email: '',
+    password: '',
+    passwordRepeat: '',
+  };
   let apiProgress = false;
   let signUpSuccess = false;
   let errors = {};
 
-  $: disabled = password && passwordRepeat ? password !== passwordRepeat : true;
-  $: passwordMismatch = password !== passwordRepeat;
+  $: disabled =
+    form.password && form.passwordRepeat
+      ? form.password !== form.passwordRepeat
+      : true;
+  $: passwordMismatch = form.password !== form.passwordRepeat;
+  
   // watching variables and clear the errors when variables has some values
-  $: {
-    if (username) {
-      errors.username = '';
-    }
-    if (email) {
-      errors.email = '';
-    }
-    if (password) {
-      errors.password = '';
-    }
-  }
+  // $: {
+  //   if (username) {
+  //     errors.username = '';
+  //   }
+  //   if (email) {
+  //     errors.email = '';
+  //   }
+  //   if (password) {
+  //     errors.password = '';
+  //   }
+  // }
 
   const submit = async () => {
     apiProgress = true;
+    const { username, email, password } = form;
 
     try {
       await axios.post('/api/1.0/users', {
@@ -42,19 +51,12 @@
     }
   };
 
-  const onChangeUsername = (event) => {
-    // console.log("SignUpPage is receiving --> ", event.detail);
-    username = event.target.value;
-  }
-  const onChangeEmail = (event) => {
-    email = event.target.value;
-  }
-  const onChangePassword = (event) => {
-    password = event.target.value;
-  }
-  const onChangePasswordRepeat = (event) => {
-    passwordRepeat = event.target.value;
-  }
+  const onChange = (event) => {
+    const { id, value } = event.target;
+    // console.log({ id, value });
+    form[id] = value;
+    errors[id] = '';
+  };
 </script>
 
 <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
@@ -69,28 +71,28 @@
           id="username"
           label="Username"
           help={errors.username}
-          on:input={onChangeUsername}
+          on:input={onChange}
         />
         <Input
-          id="e-mail"
+          id="email"
           type="email"
           label="E-mail"
           help={errors.email}
-          on:input={onChangeEmail}
+          on:input={onChange}
         />
         <Input
           id="password"
           type="password"
           label="Password"
           help={errors.password}
-          on:input={onChangePassword}
+          on:input={onChange}
         />
         <Input
-          id="password-repeat"
+          id="passwordRepeat"
           type="password"
           label="Password Repeat"
           help={passwordMismatch ? 'Password mismatch' : ''}
-          on:input={onChangePasswordRepeat}
+          on:input={onChange}
         />
 
         <div class="text-center">

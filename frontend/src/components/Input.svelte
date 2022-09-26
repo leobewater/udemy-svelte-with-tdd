@@ -3,15 +3,14 @@
 
   export let label = '',
     id = '',
-    entry = '',
     help = '',
     type = 'text';
 
   // use reference and onMount to assign dynamic type
-  let inputElement;
-  onMount(() => {
-    inputElement.type = type;
-  });
+  // let inputElement;
+  // onMount(() => {
+  //   inputElement.type = type;
+  // });
 
   // const dispatch = createEventDispatcher();
 
@@ -22,14 +21,7 @@
 
 <div class="form-group">
   <label for={id}>{label}</label>
-  <input
-    bind:this={inputElement}
-    {id}
-    class="form-control"
-    class:is-invalid={help}
-    bind:value={entry}
-    on:input
-  />
+  <input {type} {id} class="form-control" class:is-invalid={help} on:input />
   {#if help}
     <span class="invalid-feedback" role="alert">{help}</span>
   {/if}

@@ -39,6 +39,10 @@
       apiProgress = false;
     }
   };
+
+  const onChangeUsername = (event) => {
+    console.log(event.target.value);
+  }
 </script>
 
 <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
@@ -54,6 +58,7 @@
           label="Username"
           help={errors.username}
           bind:entry={username}
+          onChange={onChangeUsername}
         />
         <Input
           id="e-mail"

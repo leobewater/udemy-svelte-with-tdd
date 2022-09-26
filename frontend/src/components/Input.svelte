@@ -5,7 +5,7 @@
     id = '',
     entry = '',
     help = '',
-    type = 'text';
+    type = 'text', onChange;
 
   // use reference and onMount to assign dynamic type
   let inputElement;
@@ -22,6 +22,7 @@
     class="form-control"
     class:is-invalid={help}
     bind:value={entry}
+    on:input={onChange}
   />
   {#if help}
     <span class="invalid-feedback" role="alert">{help}</span>
